@@ -1,0 +1,36 @@
+/* Chat bubble container */
+#chat-output {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* User message bubble */
+.user-bubble {
+    background-color: #DCF8C6; /* Light green (WhatsApp-style) */
+    color: #333;
+    padding: 12px 16px;
+    border-radius: 15px;
+    max-width: 70%;
+    align-self: flex-end;
+    font-size: 16px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Assistant message bubble */
+.assistant-bubble {
+    background-color: #F0F0F0; /* Light gray */
+    color: #333;
+    padding: 12px 16px;
+    border-radius: 15px;
+    max-width: 70%;
+    align-self: flex-start;
+    font-size: 16px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Bold text inside bubbles */
+.user-bubble b,
+.assistant-bubble b {
+    font-weight: bold;
+}
