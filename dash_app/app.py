@@ -1,7 +1,7 @@
 import dash
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
-from tabs import finder, chatbot, analysis
+from tabs import finder, chatbot, analysis, about
 
 from dash import Dash, html, dcc, callback, Output, Input, State
 import dash_bootstrap_components as dbc
@@ -11,6 +11,7 @@ from functions import seeker
 import re
 import tabs.chatbot as chatbot
 import tabs.analysis as analysis
+import tabs.about as about
 
 # initialize app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
@@ -49,6 +50,8 @@ def render_content(tab_name):
         return chatbot.layout 
     elif tab_name == "analysis":
         return analysis.layout 
+    elif tab_name == "about":
+        return about.layout
     return html.Div("Invalid Tab", style={"color": "red"})
 
 
