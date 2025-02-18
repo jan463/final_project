@@ -9,35 +9,35 @@ import requests
 import re
 
 
-# Page setup
+# setup
 st.set_page_config(
     page_title="Menunator",
     layout="wide", 
     page_icon="🍕",
 )
 
-# Title and Images
+######## title #########
 col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
 with col2:
     st.header("Menu Browser")
 with col3:
-    st.image("Bowser.png", width=100)
+    st.image("./assets/food_pic.jpg", width=100)
 
-# Tabs
-#col1, col2, col3 = st.columns([10, 3, 10])
-#with col2:
+######## tabs #########
+
+
 tab1, tab2 = st.tabs(["Finder", "About"])
 
 with tab1:
     st.write("\n\n\n")
 
-    # Load data
+    # load 
     df = pd.read_csv("../data/master.csv")
     def convert_list(x):
         return ast.literal_eval(x)
     df["nations"] = df["nations"].apply(convert_list)
 
-    # Initialize session state variables
+    # session state
     if 'filtered_df' not in st.session_state:
         st.session_state.filtered_df = pd.DataFrame()
 
@@ -47,7 +47,7 @@ with tab1:
     if 'button_pushed' not in st.session_state:
         st.session_state.button_pushed = 0
 
-    # Declare search terms
+    # search terms
     ingredients = "x"
     name = "x"
     cooktime = "x"
@@ -57,7 +57,7 @@ with tab1:
     searchword = ""
 
 
-    # Search filters
+    # filters
     col1, col2, col3, col4, col5, col6, col7 = st.columns([5, 3, 1, 3, 1, 3, 5])
     with col2:
         st.markdown("**Time**")
@@ -68,8 +68,6 @@ with tab1:
     with col4:
         st.markdown("**Dish**")
         dish = st.radio("", ["All", "Appetizer", "Salad", "Soup", "Main Dish", "Side", "Dessert"])
-        #st.selectbox('Select', [1,2,3])
-        #st.multiselect('Multiselect', [1,2,3])
         searchword = st.text_input("Enter a search word:")
 
     with col6:
@@ -81,14 +79,13 @@ with tab1:
     col1, col2, col3 = st.columns([5, 1, 5])
     with col2:
         if st.button("Search Recipes"):
-            # Filter the DataFrame based on user inputs
             st.session_state.filtered_df = seeker(df, ingredients, name, cooktime, preptime, totaltime, dish, searchword, calories, carbs, protein)
-            st.session_state.page_var = 0  # Reset to first page
+            st.session_state.page_var = 0 
             st.session_state.button_pushed = 1
 
     st.divider()
 
-    # Page navigation
+    # navigation
     items_per_page = 10
     total_items = len(st.session_state.filtered_df)
     total_pages = (total_items - 1) // items_per_page + 1
@@ -106,7 +103,6 @@ with tab1:
         with col3:
             st.write(f"Page {st.session_state.page_var+1} from {total_pages}")
 
-    # Slice DataFrame for the current page
     start_index = st.session_state.page_var * items_per_page
     end_index = start_index + items_per_page
     page_df = st.session_state.filtered_df.iloc[start_index:end_index]
@@ -115,7 +111,6 @@ with tab1:
 
     st.write("\n\n")
 
-    # Custom CSS for Streamlit button styling
     st.markdown(
         """
         <style>
@@ -140,7 +135,6 @@ with tab1:
     )
 
 
-    # Display the current page of DataFrame with buttons
     col1, col2, col3, col4 = st.columns([3, 1, 2, 8])
 
 
@@ -183,7 +177,6 @@ with tab1:
 
                     try:
                         url = re.findall(r'"([^"]*)"', row["images"])             
-                        #url = row["images"].strip('"')
                         st.image(url, width=240)
                     except:
                         ""
