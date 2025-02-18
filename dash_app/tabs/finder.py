@@ -11,9 +11,9 @@ import tabs.chatbot as chatbot
 df = pd.read_csv("../data/master.csv")
 
 
-# Layout
+########### layout ##########
 layout = dbc.Container([
-    dbc.Row([  # Wrap filters in a row
+    dbc.Row([  
         dbc.Col([
             html.Label("Preparation Time:"),
             dcc.Slider(id='prep-time', min=0, max=180, value=0,
@@ -63,17 +63,17 @@ layout = dbc.Container([
             dcc.Slider(id='protein', min=0, max=100, value=0,
                         marks={i: str(i) for i in range(0, 101, 25)})
         ], width=4)
-    ], justify="center", className="mb-4"),  # Ensure columns are aligned
+    ], justify="center", className="mb-4"),  
     dbc.Row([
         dbc.Col(html.Button("Reset", id="home-button", n_clicks=0, className="btn btn-primary"), width=2, className="text-center")
     ], justify="center"),
 
     html.Hr(),
 
-    # Recipe results (initially empty until filters change)
+    ########### results ###############
     dbc.Row(id='recipe-results', className="mt-4"),
 
-    # Pagination and results (conditionally rendered)
+    ############# pagination ############
     dbc.Row([
         dbc.Col(html.Button("Previous", id="prev-button", n_clicks=0, className="btn btn-secondary")),
         dbc.Col(html.Div(id="pagination-info", className="text-center mt-2")),
@@ -89,22 +89,22 @@ layout = dbc.Container([
 
 
 @callback(
-    Output('url', 'href'),  # Update the 'href' of dcc.Location to trigger a page refresh
+    Output('url', 'href'),
     Input('home-button', 'n_clicks')
 )
 def go_home(n_clicks):
     if n_clicks > 0:
-        return '/'  # This will refresh the page
+        return '/'  
     return dash.no_update
 
 
 
-# Callback to update recipes live
+# callback for live update recipes
 @callback(
     Output('recipe-results', 'children'),
     Output('page-store', 'data'),
     Output('pagination-info', 'children'),
-    Output('pagination-row', 'style'),  # Add this output to conditionally show pagination
+    Output('pagination-row', 'style'), 
     Input('prep-time', 'value'),
     Input('cook-time', 'value'),
     Input('total-time', 'value'),
@@ -120,7 +120,6 @@ def go_home(n_clicks):
     Input('next-button', 'n_clicks')
 )
 def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, carbs, protein, ingredients, name, page_data, prev_clicks, next_clicks):
-    # Default to empty string if None is provided for searchword
     searchword = searchword or ""
     ingredients = ingredients or ""
     name = name or ""
@@ -132,22 +131,19 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
     carbs = carbs or 0
     protein = protein or 0
 
-    # Ensure page_data is a dictionary with 'page' and 'total_pages'
     if not isinstance(page_data, dict):
         page_data = {'page': 0, 'total_pages': 1}
 
-    # Get the current page and total pages from the store
     current_page = page_data['page']
 
-    # Filter the DataFrame based on input values
+    # filter results
     filtered_df = seeker(df, ingredients, name, cooktime, preptime, totaltime, dish, searchword, calories, carbs, protein)
 
-    # Calculate total pages
     items_per_page = 5
     total_items = len(filtered_df)
     total_pages = max(1, (total_items - 1) // items_per_page + 1)
 
-    # Handle "Previous" and "Next" button logic
+    # page buttons
     if prev_clicks > 0 and current_page > 0:
         current_page -= 1
         prev_clicks = 0
@@ -156,11 +152,10 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
         current_page += 1
         next_clicks = 0
 
-    # Update the page store data
     page_data['page'] = current_page
     page_data['total_pages'] = total_pages
 
-    # Get the slice of data for the current page
+    # pagination
     start_index = current_page * items_per_page
     end_index = start_index + items_per_page
     page_df = filtered_df.iloc[start_index:end_index]
@@ -168,20 +163,17 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
     if filtered_df.empty:
         return [], page_data, "Page 0 of 0", {'display': 'none'}  # No recipes and hide pagination
 
-    # Create cards for the current page
-# Create cards for the current page
+    ########### results ###########
     cards = [
         dbc.Card([
             dbc.CardBody([
                 dbc.Row([
-                    # Image column (left)
                     dbc.Col([
                         html.Img(
                             src=re.findall(r'"([^"]*)"', row["images"])[0] if re.findall(r'"([^"]*)"', row["images"]) else "/assets/default.png", 
                             className="card-img-left", 
                             style={'width': '200px'}
                         ),
-                        # Text content under the image
                         html.P(f"Rating: {row['aggregatedrating']}"), 
                         html.P(f'{row["servings"]} Servings, Serving size: {row["serving_size"]}g'),
                         html.Div([
@@ -192,9 +184,8 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
                                 f'{row["carbohydratecontent"]}g Carbohydrates, {row["sugarcontent"]}g Sugar, '
                                 f'{row["proteincontent"]}g Protein')
                         ]),
-                    ], width=3, className="d-flex flex-column align-items-start"),  # Stack image and text vertically
+                    ], width=3, className="d-flex flex-column align-items-start"), 
 
-                    # Text content column (right)
                     dbc.Col([
                         html.H4(row['name']),
                         html.P(row['description'], className="card-text"),
@@ -206,7 +197,7 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
                         html.Ol([
                             html.Li(step) for step in re.split(r";|', '", row["steps"].strip("[]"))
                         ])
-                    ], width=9),  # Text content on the right
+                    ], width=9),
                 ])
             ])
         ], className="mb-4") for _, row in page_df.iterrows()
@@ -214,11 +205,10 @@ def update_recipes(preptime, cooktime, totaltime, searchword, dish, calories, ca
 
 
 
-
-    # Page info display
+    # page info
     page_info = f"Page {current_page + 1} of {total_pages}"
 
-    return cards, page_data, page_info, {'display': 'block'}  # Show pagination after search
+    return cards, page_data, page_info, {'display': 'block'} 
 
 def process_image_url(images_str):
     if not isinstance(images_str, str) or pd.isna(images_str):

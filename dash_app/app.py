@@ -1,6 +1,7 @@
+import dash
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
-from tabs import finder, chatbot  # Import the tab layouts
+from tabs import finder, chatbot, analysis
 
 from dash import Dash, html, dcc, callback, Output, Input, State
 import dash_bootstrap_components as dbc
@@ -8,20 +9,21 @@ import pandas as pd
 import json
 from functions import seeker
 import re
-import dash
 import tabs.chatbot as chatbot
+import tabs.analysis as analysis
 
-# Initialize the Dash app
+# initialize app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
-
 
 app.layout = dbc.Container([
     dcc.Location(id='url', refresh=True),
+    dbc.Row(style={'height': '20px'}),
+
     dbc.Row([
-        dbc.Col(html.H1("Menu Browser"), width=12, md=4, className="text-center"),
-        dbc.Col(html.Img(src="/assets/Bowser.png", style={'width': '100px'}), width=12, md=2)
+        dbc.Col(html.H1("Menu Browser"), width=12, md=4, className="text-center", style={"font-family": "Aptos"}),
+        dbc.Col(html.Img(src="/assets/food_pic.jpg", style={'width': '100px'}), width=12, md=2)
     ], justify="center"),
-    dbc.Row(style={'height': '50px'}),  # Creates a taller blank space
+    dbc.Row(style={'height': '20px'}),
 
     dcc.Tabs(
         id="tabs",
@@ -33,39 +35,22 @@ app.layout = dbc.Container([
             dcc.Tab(label="About", value="about"),
         ]
     ),
-    html.Div(id="tabs-content")  # This will display the content of the selected tab
+    html.Div(id="tabs-content")  # display tab content
 ])
-        
 
-
-
-
-
-
-
-
-
-
-
-
-# Callback function to update the tab content dynamically
 @app.callback(
-    Output("tabs-content", "children"),  # Update the content of this div
-    Input("tabs", "value")  # Trigger the callback based on selected tab
+    Output("tabs-content", "children"), 
+    Input("tabs", "value")
 )
 def render_content(tab_name):
     if tab_name == "finder":
-        return finder.layout  # Return content for Tab 1
+        return finder.layout 
     elif tab_name == "chatbot":
-        return chatbot.layout  # Return content for Tab 2
-    return html.Div("Invalid Tab", style={"color": "red"})  # Default error message if needed
+        return chatbot.layout 
+    elif tab_name == "analysis":
+        return analysis.layout 
+    return html.Div("Invalid Tab", style={"color": "red"})
 
 
-
-
-
-
-
-# Run the app server
 if __name__ == "__main__":
     app.run_server(debug=True)
