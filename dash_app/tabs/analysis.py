@@ -6,7 +6,9 @@ import plotly.colors as pc
 import ast
 import dash_bootstrap_components as dbc
 
-df = pd.read_csv("../data/master.csv")
+#df = pd.read_csv("../data/master.csv")
+file_url = "https://drive.google.com/file/d/11gv-CdPllRVLrt6QRTE5MwNNN1gBj5l2/view?usp=sharing"
+df = pd.read_csv(file_url)
 
 ast.literal_eval(df["nations"][2])
 

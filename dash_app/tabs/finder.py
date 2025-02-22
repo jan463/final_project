@@ -8,8 +8,9 @@ import dash
 import tabs.chatbot as chatbot
 
 
-df = pd.read_csv("../data/master.csv")
-
+#df = pd.read_csv("../data/master.csv")
+file_url = "https://drive.google.com/file/d/11gv-CdPllRVLrt6QRTE5MwNNN1gBj5l2/view?usp=sharing"
+df = pd.read_csv(file_url)
 
 ########### layout ##########
 layout = dbc.Container([
