@@ -15,6 +15,7 @@ import tabs.about as about
 
 # initialize app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+server = app.server
 
 app.layout = dbc.Container([
     dcc.Location(id='url', refresh=True),
