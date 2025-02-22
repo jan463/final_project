@@ -9,7 +9,8 @@ import tabs.chatbot as chatbot
 
 
 #df = pd.read_csv("../data/master.csv")
-file_url = "https://drive.google.com/file/d/11gv-CdPllRVLrt6QRTE5MwNNN1gBj5l2/view?usp=sharing"
+file_id = "11gv-CdPllRVLrt6QRTE5MwNNN1gBj5l2"
+file_url = f"https://drive.google.com/uc?id={file_id}"
 df = pd.read_csv(file_url)
 
 ########### layout ##########
